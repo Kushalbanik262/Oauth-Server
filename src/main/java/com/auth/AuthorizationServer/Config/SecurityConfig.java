@@ -72,7 +72,8 @@ public class SecurityConfig {
     @Bean
     @Order(2)
     public SecurityFilterChain defaultConfiguration(HttpSecurity security) throws Exception{
-        security.authorizeHttpRequests((authorize)->authorize.anyRequest().authenticated())
+        security.authorizeHttpRequests(authorize->
+                        authorize.requestMatchers("/client/**").permitAll().anyRequest().authenticated())
                 .formLogin(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable);
         return security.build();
     }
@@ -89,8 +90,8 @@ public class SecurityConfig {
 
 
 
-    @Bean
-    public RegisteredClientRepository registeredClientRepository(DbClientRegistry clientRegistry){
+//    @Bean
+//    public RegisteredClientRepository registeredClientRepository(DbClientRegistry clientRegistry){
 //        RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
 //                .clientId("demo-client")
 //                .clientSecret("{noop}secret")
@@ -105,9 +106,9 @@ public class SecurityConfig {
 //                .scope("api.read")
 //                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
 //                .build();
-
-       return clientRegistry;
-    }
+//
+//       return clientRegistry;
+//    }
 
 
     @Bean

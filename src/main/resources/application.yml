@@ -2,3 +2,18 @@ server:
   port: 9000
 
 debug: true
+
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+
+  datasource:
+    url:
+      jdbc:mysql://localhost:3306/securedb
+    username:
+      root
+    password:
+      password
+    driver-class-name: com.mysql.cj.jdbc.Driver

@@ -17,22 +17,22 @@ import java.util.UUID;
 @Data
 @NoArgsConstructor@AllArgsConstructor
 @Table(name = "OAuthClient")
+@Entity
 public class OAuthClient {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
     private String clientId;
-    @Column
+    @Column(nullable = false)
     private String clientSecret;
-    @Column
+    @Column(nullable = false)
     private String redirectUri;
-    @Column
+    @Column(nullable = false)
     private String scopes;
-    @Column
+    @Column(nullable = false)
     private String grantTypes;
 
     public RegisteredClient registerThisClient(){
         return RegisteredClient.withId(UUID.randomUUID().toString())
-                .id(clientId)
+                .clientId(clientId)
                 .redirectUri(redirectUri)
                 .clientSecret("{noop}"+clientSecret)
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
