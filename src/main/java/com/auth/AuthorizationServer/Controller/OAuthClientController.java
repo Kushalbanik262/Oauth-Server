@@ -18,6 +18,7 @@ public class OAuthClientController {
     @Autowired
     private OAuthClientRepository clientRepository;
 
+    // Register new Client
     @PostMapping("/register")
     public ResponseEntity<OAuthClient> registerOAuthClient(@RequestBody OAuthClient client){
         clientRepository.save(client); // save to db
