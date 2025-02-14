@@ -1,6 +1,7 @@
 package com.auth.AuthorizationServer.Config;
 
 
+import com.auth.AuthorizationServer.generator.TokenGenerator;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.ImmutableJWKSet;
@@ -19,6 +20,8 @@ import org.springframework.security.config.authentication.PasswordEncoderParser;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
@@ -31,6 +34,7 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.provisioning.UserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
@@ -74,41 +78,24 @@ public class SecurityConfig {
     public SecurityFilterChain defaultConfiguration(HttpSecurity security) throws Exception{
         security.authorizeHttpRequests(authorize->
                         authorize.requestMatchers("/client/**").permitAll().anyRequest().authenticated())
-                .formLogin(Customizer.withDefaults()).csrf(AbstractHttpConfigurer::disable);
+                .formLogin(form -> form
+                        .permitAll()  // ✅ Allow all users to access the login page
+                        .defaultSuccessUrl("/home", true) // ✅ Redirect after successful login
+                )
+                .csrf(AbstractHttpConfigurer::disable);
         return security.build();
     }
 
     @Bean
     public UserDetailsService getUserDetails(){
-        UserDetails userDetails = User.withDefaultPasswordEncoder()
+        UserDetails userDetails = User.builder()
                 .username("kushal")
-                .password("password")
+                .password(passwordEncoder().encode("password"))
                 .roles("USER")
                 .build();
         return new InMemoryUserDetailsManager(userDetails);
     }
 
-
-
-//    @Bean
-//    public RegisteredClientRepository registeredClientRepository(DbClientRegistry clientRegistry){
-//        RegisteredClient oidcClient = RegisteredClient.withId(UUID.randomUUID().toString())
-//                .clientId("demo-client")
-//                .clientSecret("{noop}secret")
-//                .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
-//                .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
-//                .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-//                .redirectUri("http://127.0.0.1:8080/login/oauth2/code/oidc-client")
-//                .redirectUri("https://oauth.pstmn.io/v1/callback")
-//                .postLogoutRedirectUri("http://127.0.0.1:8080/")
-//                .scope(OidcScopes.OPENID)
-//                .scope(OidcScopes.PROFILE)
-//                .scope("api.read")
-//                .clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
-//                .build();
-//
-//       return clientRegistry;
-//    }
 
 
     @Bean
@@ -145,6 +132,10 @@ public class SecurityConfig {
         return AuthorizationServerSettings.builder().build();
     }
 
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();  // No hashing
+    }
 
 
 }
