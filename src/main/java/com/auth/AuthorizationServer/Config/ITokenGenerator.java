@@ -1,5 +1,6 @@
 package com.auth.AuthorizationServer.Config;
 
+import com.auth.AuthorizationServer.Models.ReferenceTokenDTO;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenContext;
 
 import javax.naming.Context;
@@ -29,5 +30,5 @@ public interface ITokenGenerator {
      * @param token The token I want to lookup
      * @return the user present with the token
      */
-    public String getUserFromtoken(String token);
+    public String getUserFromtoken(ReferenceTokenDTO token);
 }

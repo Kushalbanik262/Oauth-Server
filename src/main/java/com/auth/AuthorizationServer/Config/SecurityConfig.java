@@ -17,6 +17,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.authentication.PasswordEncoderParser;
+import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -63,6 +64,7 @@ public class SecurityConfig {
                 )
                 .authorizeHttpRequests((authorize)->authorize.anyRequest().authenticated())
                 .csrf(AbstractHttpConfigurer::disable)
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // Enforce stateless sessions
                 .exceptionHandling(
                         (exception)->
                             exception.defaultAuthenticationEntryPointFor(
@@ -78,10 +80,12 @@ public class SecurityConfig {
     public SecurityFilterChain defaultConfiguration(HttpSecurity security) throws Exception{
         security.authorizeHttpRequests(authorize->
                         authorize.requestMatchers("/client/**").permitAll().anyRequest().authenticated())
-                .formLogin(form -> form
-                        .permitAll()  // ✅ Allow all users to access the login page
-                        .defaultSuccessUrl("/home", true) // ✅ Redirect after successful login
-                )
+//                .formLogin(form -> form
+//                        .permitAll()  // ✅ Allow all users to access the login page
+//                        .defaultSuccessUrl("/home", true) // ✅ Redirect after successful login
+//                )
+                .httpBasic(Customizer.withDefaults()) // Use HTTP Basic authentication
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .csrf(AbstractHttpConfigurer::disable);
         return security.build();
     }

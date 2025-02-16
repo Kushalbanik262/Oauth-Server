@@ -1,6 +1,7 @@
 package com.auth.AuthorizationServer.Config;
 
 import com.auth.AuthorizationServer.Exception.UserNotExistsException;
+import com.auth.AuthorizationServer.Models.ReferenceTokenDTO;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenContext;
 import org.springframework.stereotype.Service;
 
@@ -37,8 +38,8 @@ public class InMemoryTokenGenerator implements ITokenGenerator{
     }
 
     @Override
-    public String getUserFromtoken(String token) {
-        if(!inMemoryAccessTokenStore.containsKey(token)){throw new UserNotExistsException();}
-        return inMemoryAccessTokenStore.get(token);
+    public String getUserFromtoken(ReferenceTokenDTO token) {
+        if(!inMemoryAccessTokenStore.containsKey(token.getToken())){throw new UserNotExistsException();}
+        return inMemoryAccessTokenStore.get(token.getToken());
     }
 }

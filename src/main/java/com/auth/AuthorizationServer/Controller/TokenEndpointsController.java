@@ -1,6 +1,7 @@
 package com.auth.AuthorizationServer.Controller;
 
 import com.auth.AuthorizationServer.Config.ITokenGenerator;
+import com.auth.AuthorizationServer.Models.ReferenceTokenDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +17,7 @@ public class TokenEndpointsController {
     private ITokenGenerator tokenGenerator;
 
     @PostMapping("/introspect")
-    public ResponseEntity getUserToken(@RequestBody String referenceToken){
+    public ResponseEntity getUserToken(@RequestBody ReferenceTokenDTO referenceToken){
         return ResponseEntity.ok(tokenGenerator.getUserFromtoken(referenceToken));
     }
 }
